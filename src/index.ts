@@ -24,6 +24,7 @@ server.get("/", async (request, response) => {
 });
 
 server.post("/handle-user", async (request, response) => {
+  console.log(request.body);
   try {
     const { userName, userEmail, userID } = request.body;
     const user = await searchUser(userID);
