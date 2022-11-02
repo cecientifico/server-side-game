@@ -4,19 +4,24 @@ type User = {
   userID: string;
 };
 
-import { PrismaClient } from "@prisma/client";
+import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const searchUser = (userID: string) => {
-  return prisma.users.findUnique({
-    where: {
-      userProviderID: userID,
-    },
-  });
+export const searchUser = async (userID: string) => {
+  try {
+    return await prisma.users.findUnique({
+      where: {
+        userProviderID: userID,
+      },
+    });
+  } catch (error) {
+    return null
+  }
+
 };
 
-export const createUser = ({ userName, userEmail, userID }: User) => {
+export const createUser = ({userName, userEmail, userID}: User) => {
   return prisma.users.create({
     data: {
       name: userName,
@@ -27,71 +32,99 @@ export const createUser = ({ userName, userEmail, userID }: User) => {
 };
 
 export const newResult = async (
-  { userName, userEmail, userID }: User,
-  newResult: string
-) => {
-  type Results = {
-    id: string;
-    results: string;
-  };
-  type LastResult = {
-    name: string;
-    email: string;
-    id: string;
-    userProviderID: string;
-    results: Results;
-  };
-  const lastResult = await prisma.users.findUnique({
-    where: {
-      userProviderID: userID,
-    },
-    include: {
-      results: {
-        take: 1,
-        orderBy: {
-          results: "desc",
-        },
+  {userName, userEmail, userID}: User, modality: string,
+    newResult: string
+  ) => {
+    type Results = {
+      id: string;
+      results: string;
+    };
+    type LastResult = {
+      name: string;
+      email: string;
+      id: string;
+      userProviderID: string;
+      results: Results;
+    };
+    const lastResult: any = await prisma.users.findUnique({
+      where: {
+        userProviderID: userID,
       },
-    },
-  });
-  if (lastResult?.results.length !== 0) {
-    if (Number(lastResult?.results[0].results) < Number(newResult)) {
+      include: {
+        [modality]: {
+          take: 1,
+          orderBy: {
+            results: 'desc',
+          }
+        }
+      },
+    });
+    if (lastResult[modality].length === 0) {
       return prisma.users.update({
         where: {
           userProviderID: userID,
         },
         data: {
-          results: {
+          [modality]: {
             create: {
               results: newResult,
-            },
-          },
+            }
+          }
         },
       });
     }
-    return;
-  }
-  return prisma.users.update({
-    where: {
-      userProviderID: userID,
-    },
-    data: {
-      results: {
-        create: {
-          results: newResult,
+    if (modality === "casually") {
+      if (Number(lastResult[modality][0].results) > Number(newResult)) {
+        return prisma.users.update({
+          where: {
+            userProviderID: userID,
+          },
+          data: {
+            casually: {
+              update: {
+                where: {
+                  id: lastResult[modality][0].id
+                },
+                data: {
+                  results: newResult,
+                }
+              }
+            }
+          }
+        });
+      }
+      return
+    }
+    if (Number(lastResult[modality][0].results) < Number(newResult)) {
+      return prisma.users.update({
+        where: {
+          userProviderID: userID,
         },
-      },
-    },
-  });
-};
+        data: {
+          [modality]: {
+            update: {
+              where: {
+                id: lastResult[modality][0].id
+              },
+              data: {
+                results: newResult,
+              }
+            }
+          }
+        }
+      });
+      return
+    }
+  }
+;
 
-export const getUserResults = (userID: string) => {
+export const getUserResults = (userID: string, modality: string) => {
   return prisma.users.findUnique({
     where: {
       userProviderID: userID,
     },
     include: {
-      results: {
+      [modality]: {
         take: 1,
         orderBy: {
           results: "desc",
@@ -100,21 +133,21 @@ export const getUserResults = (userID: string) => {
     },
   });
 };
-
-export const getAllResults = () => {
-  return prisma.users.findMany({
-    include: {
-      results: {
-        take: 1,
-        orderBy: {
-          results: "desc",
-        },
-      },
-    },
-    orderBy: {
-      results: {
-        _count: "desc",
-      },
-    },
-  });
-};
+//
+// export const getAllResults = () => {
+//   return prisma.users.findMany({
+//     include: {
+//       results: {
+//         take: 1,
+//         orderBy: {
+//           results: "desc",
+//         },
+//       },
+//     },
+//     orderBy: {
+//       results: {
+//         _count: "desc",
+//       },
+//     },
+//   });
+// };

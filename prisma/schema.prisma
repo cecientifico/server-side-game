@@ -16,12 +16,28 @@ model Users {
   email          String    @unique
   userProviderID String    @unique
   name           String?
-  results        Results[]
+  adventure      Adventure[]
+  arcade         Arcade[]
+  casually       Casually[]
 }
 
-model Results {
+model Adventure {
   id      Int     @id @default(autoincrement())
   results String?
-  Users   Users?  @relation(fields: [usersId], references: [id])
-  usersId Int?
-} 
+  users   Users?  @relation(fields: [usersID], references: [id])
+  usersID Int?
+}
+
+model Arcade {
+  id      Int     @id @default(autoincrement())
+  results String?
+  users   Users?  @relation(fields: [usersID], references: [id])
+  usersID Int?
+}
+model  Casually {
+  id      Int     @id @default(autoincrement())
+  results String?
+  users   Users?  @relation(fields: [usersID], references: [id])
+  usersID Int?
+}
+
