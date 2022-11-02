@@ -72,4 +72,8 @@ server.get("/user-results/:modality/:userID", async (request, response) => {
 //   response.status(200).json({ results: results });
 // });
 
+
+server.get('/check', async(request, response) => {
+  response.status(200).send('ok')
+})
 server.listen(process.env.PORT || '3000');

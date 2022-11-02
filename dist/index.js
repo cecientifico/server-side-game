@@ -136,5 +136,11 @@ server.get("/user-results/:modality/:userID", function (request, response) { ret
 //   const results = await getAllResults();
 //   response.status(200).json({ results: results });
 // });
-server.listen(3000);
+server.get('/check', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        response.status(200).send('ok');
+        return [2 /*return*/];
+    });
+}); });
+server.listen(process.env.PORT || '3000');
 //# sourceMappingURL=index.js.map
