@@ -72,4 +72,4 @@ server.get("/user-results/:modality/:userID", async (request, response) => {
 //   response.status(200).json({ results: results });
 // });
 
-server.listen(3000);
+server.listen(process.env.PORT || '3000');
