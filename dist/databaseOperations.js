@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.getUserResults = exports.newResult = exports.createUser = exports.searchUser = void 0;
+exports.getAllResults = exports.getUserResults = exports.newResult = exports.createUser = exports.searchUser = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 var searchUser = function (userID) { return __awaiter(void 0, void 0, void 0, function () {
@@ -61,12 +61,19 @@ var searchUser = function (userID) { return __awaiter(void 0, void 0, void 0, fu
 exports.searchUser = searchUser;
 var createUser = function (_a) {
     var userName = _a.userName, userEmail = _a.userEmail, userID = _a.userID;
-    return prisma.users.create({
-        data: {
-            name: userName,
-            email: userEmail,
-            userProviderID: userID
-        }
+    return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, prisma.users.create({
+                        data: {
+                            name: userName,
+                            email: userEmail,
+                            userProviderID: userID
+                        }
+                    })];
+                case 1: return [2 /*return*/, _b.sent()];
+            }
+        });
     });
 };
 exports.createUser = createUser;
@@ -93,101 +100,111 @@ var newResult = function (_a, modality, newResult) {
                         })];
                 case 1:
                     lastResult = _e.sent();
-                    if (lastResult[modality].length === 0) {
-                        return [2 /*return*/, prisma.users.update({
-                                where: {
-                                    userProviderID: userID
+                    if (!(lastResult[modality].length === 0)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, prisma.users.update({
+                            where: {
+                                userProviderID: userID
+                            },
+                            data: (_c = {},
+                                _c[modality] = {
+                                    create: {
+                                        results: newResult
+                                    }
                                 },
-                                data: (_c = {},
-                                    _c[modality] = {
-                                        create: {
+                                _c)
+                        })];
+                case 2: return [2 /*return*/, _e.sent()];
+                case 3:
+                    if (!(modality === "casually")) return [3 /*break*/, 6];
+                    if (!(Number(lastResult[modality][0].results) > Number(newResult))) return [3 /*break*/, 5];
+                    return [4 /*yield*/, prisma.users.update({
+                            where: {
+                                userProviderID: userID
+                            },
+                            data: {
+                                casually: {
+                                    update: {
+                                        where: {
+                                            id: lastResult[modality][0].id
+                                        },
+                                        data: {
                                             results: newResult
                                         }
-                                    },
-                                    _c)
-                            })];
-                    }
-                    if (modality === "casually") {
-                        if (Number(lastResult[modality][0].results) > Number(newResult)) {
-                            return [2 /*return*/, prisma.users.update({
-                                    where: {
-                                        userProviderID: userID
-                                    },
-                                    data: {
-                                        casually: {
-                                            update: {
-                                                where: {
-                                                    id: lastResult[modality][0].id
-                                                },
-                                                data: {
-                                                    results: newResult
-                                                }
-                                            }
+                                    }
+                                }
+                            }
+                        })];
+                case 4: return [2 /*return*/, _e.sent()];
+                case 5: return [2 /*return*/];
+                case 6:
+                    if (!(Number(lastResult[modality][0].results) < Number(newResult))) return [3 /*break*/, 8];
+                    return [4 /*yield*/, prisma.users.update({
+                            where: {
+                                userProviderID: userID
+                            },
+                            data: (_d = {},
+                                _d[modality] = {
+                                    update: {
+                                        where: {
+                                            id: lastResult[modality][0].id
+                                        },
+                                        data: {
+                                            results: newResult
                                         }
                                     }
-                                })];
-                        }
-                        return [2 /*return*/];
-                    }
-                    if (Number(lastResult[modality][0].results) < Number(newResult)) {
-                        return [2 /*return*/, prisma.users.update({
-                                where: {
-                                    userProviderID: userID
                                 },
-                                data: (_d = {},
-                                    _d[modality] = {
-                                        update: {
-                                            where: {
-                                                id: lastResult[modality][0].id
-                                            },
-                                            data: {
-                                                results: newResult
-                                            }
-                                        }
-                                    },
-                                    _d)
-                            })];
-                        return [2 /*return*/];
-                    }
-                    return [2 /*return*/];
+                                _d)
+                        })];
+                case 7: return [2 /*return*/, _e.sent()];
+                case 8: return [2 /*return*/];
             }
         });
     });
 };
 exports.newResult = newResult;
-var getUserResults = function (userID, modality) {
+var getUserResults = function (userID, modality) { return __awaiter(void 0, void 0, void 0, function () {
     var _a;
-    return prisma.users.findUnique({
-        where: {
-            userProviderID: userID
-        },
-        include: (_a = {},
-            _a[modality] = {
-                take: 1,
-                orderBy: {
-                    results: "desc"
-                }
-            },
-            _a)
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4 /*yield*/, prisma.users.findUnique({
+                    where: {
+                        userProviderID: userID
+                    },
+                    include: (_a = {},
+                        _a[modality] = {
+                            take: 1,
+                            orderBy: {
+                                results: "desc"
+                            }
+                        },
+                        _a)
+                })];
+            case 1: return [2 /*return*/, _b.sent()];
+        }
     });
-};
+}); };
 exports.getUserResults = getUserResults;
-//
-// export const getAllResults = () => {
-//   return prisma.users.findMany({
-//     include: {
-//       results: {
-//         take: 1,
-//         orderBy: {
-//           results: "desc",
-//         },
-//       },
-//     },
-//     orderBy: {
-//       results: {
-//         _count: "desc",
-//       },
-//     },
-//   });
-// };
+var getAllResults = function (modality) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4 /*yield*/, prisma.users.findMany({
+                    include: (_a = {},
+                        _a[modality] = {
+                            orderBy: {
+                                results: "desc"
+                            }
+                        },
+                        _a),
+                    orderBy: (_b = {},
+                        _b[modality] = {
+                            _count: 'desc'
+                        },
+                        _b)
+                })];
+            case 1: return [2 /*return*/, _c.sent()];
+        }
+    });
+}); };
+exports.getAllResults = getAllResults;
 //# sourceMappingURL=databaseOperations.js.map

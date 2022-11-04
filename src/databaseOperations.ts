@@ -21,8 +21,8 @@ export const searchUser = async (userID: string) => {
 
 };
 
-export const createUser = ({userName, userEmail, userID}: User) => {
-  return prisma.users.create({
+export const createUser = async ({userName, userEmail, userID}: User) => {
+  return await prisma.users.create({
     data: {
       name: userName,
       email: userEmail,
@@ -60,7 +60,7 @@ export const newResult = async (
       },
     });
     if (lastResult[modality].length === 0) {
-      return prisma.users.update({
+      return await prisma.users.update({
         where: {
           userProviderID: userID,
         },
@@ -75,7 +75,7 @@ export const newResult = async (
     }
     if (modality === "casually") {
       if (Number(lastResult[modality][0].results) > Number(newResult)) {
-        return prisma.users.update({
+        return await prisma.users.update({
           where: {
             userProviderID: userID,
           },
@@ -96,7 +96,7 @@ export const newResult = async (
       return
     }
     if (Number(lastResult[modality][0].results) < Number(newResult)) {
-      return prisma.users.update({
+      return await prisma.users.update({
         where: {
           userProviderID: userID,
         },
@@ -118,8 +118,8 @@ export const newResult = async (
   }
 ;
 
-export const getUserResults = (userID: string, modality: string) => {
-  return prisma.users.findUnique({
+export const getUserResults = async (userID: string, modality: string) => {
+  return await prisma.users.findUnique({
     where: {
       userProviderID: userID,
     },
@@ -134,8 +134,8 @@ export const getUserResults = (userID: string, modality: string) => {
   });
 };
 
-export const getAllResults = (modality: string) => {
-    return prisma.users.findMany({
+export const getAllResults = async (modality: string) => {
+    return await prisma.users.findMany({
       include: {
         [modality]: {
           orderBy: {
