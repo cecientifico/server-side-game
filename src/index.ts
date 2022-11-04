@@ -7,6 +7,7 @@ import {
   searchUser,
   newResult,
   getUserResults,
+  getAllResults,
   // getAllResults,
 } from "./databaseOperations";
 const prisma = new PrismaClient();
@@ -67,10 +68,15 @@ server.get("/user-results/:modality/:userID", async (request, response) => {
   }
 });
 
-// server.post("/all-results", async (request, response) => {
-//   const results = await getAllResults();
-//   response.status(200).json({ results: results });
-// });
+server.get("/all-results/:modality", async (request, response) => {
+  try {
+    const modality = request.params.modality;
+    const results = await getAllResults(modality);
+    response.status(200).json({ results: results });
+  } catch(error) {
+    response.status(400).json({ msg: "Erro Inesperado!" });
+  }
+});
 
 
 server.get('/check', async(request, response) => {

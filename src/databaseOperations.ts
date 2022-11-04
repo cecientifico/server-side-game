@@ -32,7 +32,7 @@ export const createUser = ({userName, userEmail, userID}: User) => {
 };
 
 export const newResult = async (
-  {userName, userEmail, userID}: User, modality: string,
+    {userName, userEmail, userID}: User, modality: string,
     newResult: string
   ) => {
     type Results = {
@@ -133,21 +133,21 @@ export const getUserResults = (userID: string, modality: string) => {
     },
   });
 };
-//
-// export const getAllResults = () => {
-//   return prisma.users.findMany({
-//     include: {
-//       results: {
-//         take: 1,
-//         orderBy: {
-//           results: "desc",
-//         },
-//       },
-//     },
-//     orderBy: {
-//       results: {
-//         _count: "desc",
-//       },
-//     },
-//   });
-// };
+
+export const getAllResults = (modality: string) => {
+    return prisma.users.findMany({
+      include: {
+        [modality]: {
+          orderBy: {
+            results: "desc"
+          }
+        }
+      },
+      orderBy: {
+        [modality]: {
+          _count: 'desc'
+        }
+      }
+    });
+  }
+;
